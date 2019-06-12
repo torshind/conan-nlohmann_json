@@ -1,11 +1,12 @@
-from conans import ConanFile, CMake, tools
+from conans import ConanFile, CMake
 
 
 class NlohmannJsonConan(ConanFile):
     name = "nlohmann_json"
     version = "3.6.1"
     license = "MIT"
-    url = "https://nlohmann.github.io/json/"
+    homepage = "https://nlohmann.github.io/json/"
+    url = "https://github.com/torshind/conan-nlohmann_json/"
     description = "JSON for Modern C++"
     settings = "os", "compiler", "build_type", "arch"
     options = {"shared": [True, False]}
@@ -14,8 +15,9 @@ class NlohmannJsonConan(ConanFile):
     exports_sources = "*"
 
     def source(self):
-        git = tools.Git()
-        git.clone("https://github.com/nlohmann/json.git", "v" + self.version)
+        self.run("git clone --branch v"
+                 + self.version
+                 + " https://github.com/nlohmann/json.git")
 
     def build(self):
         pass
@@ -24,7 +26,7 @@ class NlohmannJsonConan(ConanFile):
         cmake = CMake(self)
         cmake.definitions["JSON_BuildTests"] = "OFF"
         cmake.definitions["JSON_MultipleHeaders"] = "ON"
-        cmake.configure()
+        cmake.configure(source_folder="json")
         cmake.install()
 
     def package_info(self):
